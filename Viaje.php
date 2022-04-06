@@ -79,8 +79,8 @@
 
     public function __toString(){
         $cad = "";
-        for($numPasajero = 1; $numPasajero <= count($this -> pasajeros); $numPasajero++ ){
-            $cad = $cad."Pasajero nro " . $numPasajero . "\nNombre: " . $this->pasajeros[$numPasajero]["nombre"] . " " . $this->pasajeros[$numPasajero]["apellido"] . ".\nDNI: " . $this->pasajeros[$numPasajero]["dni"]."\n";
+        for($numPasajero = 0; $numPasajero < count($this -> pasajeros); $numPasajero++ ){
+            $cad = $cad."Pasajero nro " . $numPasajero+1 . "\nNombre: " . $this->pasajeros[$numPasajero]["nombre"] . " " . $this->pasajeros[$numPasajero]["apellido"] . ".\nDNI: " . $this->pasajeros[$numPasajero]["dni"]."\n";
         }
         return "\nVuelo " . $this->getCodigo() . ".\nDestino: " . $this->getDestino() . "\nCantidad maxima de pasajeros: " . $this->getMaxPasajeros() . ".\nPasajeros:\n" . $cad;
     }

@@ -22,12 +22,12 @@ function crearVuelo(){
 
  function crearArrPasajeros($maximo){
      $cantidadPasajeros=validacion($maximo);
-     for ($numPasajero=1 ; $numPasajero <= $cantidadPasajeros ;$numPasajero++){
-        echo "\nIngrese el nombre del pasajero número " . $numPasajero . " : ";
+     for ($numPasajero=0 ; $numPasajero < $cantidadPasajeros ;$numPasajero++){
+        echo "\nIngrese el nombre del pasajero número " . $numPasajero+1 . " : ";
         $nombre = trim(fgets(STDIN));
-        echo "\nIngrese el apellido del pasajero número " . $numPasajero . " : ";
+        echo "\nIngrese el apellido del pasajero número " . $numPasajero+1 . " : ";
         $apellido = trim(fgets(STDIN));
-        echo "\nIngrese el documento del pasajero número " . $numPasajero . " : ";
+        echo "\nIngrese el documento del pasajero número " . $numPasajero+1 . " : ";
         $documento = trim(fgets(STDIN));
 
         //Asignamos los datos al numero ingresado por parametro
