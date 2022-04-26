@@ -1,5 +1,26 @@
 <?php
 include "Viaje.php";
+include "ResponsableV.php";
+include "Pasajero.php";
+
+//funcion para precarga de una coleccion con objetos
+/**
+ * @return object
+ */
+function preCarga(){
+    $coleccionPasajeros= array( 
+                    new Pasajero("Manuel","Nagel",20280046,2995579157),
+                    new Pasajero("Lucia","Castro",42735572,2995579164),
+                    new Pasajero("Juani","Beilicke",13508059,11559487),
+                    new Pasajero("Franciso","Impini",40020782,15732892),
+                    new Pasajero("Luz","Almiron",35809143,42735973)
+   
+                        );
+    $responsableV= new ResponsableV(1,13,"Gustavo","McNiles");
+    $ViajeDefault = new Viaje(4290,"Chile",35,$coleccionPasajeros,$responsableV);
+    return $ViajeDefault;
+}
+
 
 function crearVuelo(){
 
@@ -9,11 +30,26 @@ function crearVuelo(){
     $destino = trim(fgets(STDIN));
     echo "Ingrese la cantidad maxima de pasajeros del vuelo: ";
     $maximo = trim(fgets(STDIN));
+    $responsable= crearResponsable();
     $arrPasajeros = crearArrPasajeros($maximo);
-    $vuelo = new Viaje($codigo, $destino, $maximo, $arrPasajeros);
+    $vuelo = new Viaje($codigo, $destino, $maximo, $arrPasajeros,$responsable);
     return $vuelo;
 }
-
+/**
+ * Modulo para crear al responsable del vuelo
+ * @return object
+ */
+function crearResponsable(){
+    echo "\nIngrese por favor el numero del responsable: ";
+    $numR = trim(fgets(STDIN));
+    echo "\nIngrese el numero de licencia del responsable: ";
+    $numL = trim(fgets(STDIN));
+    echo "\nIngrese el nombre del responsable";
+    $nom = trim(fgets(STDIN));
+    echo  "\nIngrese el apellido del responsable";
+    $apel= trim(fgets(STDIN));
+    return new ResponsableV($numR,$numL,$nom,$apel);
+}
 /**
  * Modulo para creacion arreglo pasajeros
  * @param int $maximo
@@ -21,29 +57,64 @@ function crearVuelo(){
  */
 
  function crearArrPasajeros($maximo){
-     $cantidadPasajeros=validacion($maximo);
-     for ($numPasajero=0 ; $numPasajero < $cantidadPasajeros ;$numPasajero++){
+     $cantidadPasajeros=validacionMaxPasajeros($maximo);
+     $numPasajero=0;
+     $arregloPasajeros = array() ;
+     do{
+        
+        $documento = validacionRepetidos($arregloPasajeros,$numPasajero);
         echo "\nIngrese el nombre del pasajero número ". ($numPasajero+1) . " : ";
         $nombre = trim(fgets(STDIN));
         echo "\nIngrese el apellido del pasajero número " .($numPasajero+1) . " : ";
         $apellido = trim(fgets(STDIN));
-        echo "\nIngrese el documento del pasajero número " . ($numPasajero+1) . " : ";
-        $documento = trim(fgets(STDIN));
-
+        echo "\nIngrese el número de telefono del pasajero". ($numPasajero+1). " : ";
+        $telefono = trim(fgets(STDIN));
         //Asignamos los datos al numero ingresado por parametro
-        $arregloPasajeros[$numPasajero]["nombre"] = $nombre;
-        $arregloPasajeros[$numPasajero]["apellido"] = $apellido;
-        $arregloPasajeros[$numPasajero]["dni"] = $documento;
-    }
-    return $arregloPasajeros;
+        $arregloPasajeros[$numPasajero]= new Pasajero($nombre,$apellido,$documento,$telefono);
+        $numPasajero++;
+     }while($numPasajero<$cantidadPasajeros);
+    
+     return $arregloPasajeros;
  }
+/**
+ * Modulo que verifica que el pasajero no este repetido
+ * @param array $aPas
+ * @param int $iteracion
+ * @return int
+ */
+function validacionRepetidos($aPas,$iteracion){
+//$aPas[0]->getDocumento();
+$cond=true;
+if($iteracion==0){
+    return $doc;
+}
+while($cond){
+    echo "\nIngrese el documento del pasajero número " . ($iteracion+1) . " : ";
+        $doc = trim(fgets(STDIN));
+        $cond2=true;
+        foreach ($aPas as $value) {
+            $valores= $value->getDocumento();
+            if($doc==$valores){
+                echo "este pasajero ya existe.";
+                $cond2=false;
+                break;
+            }
+          }
+          if($cond2==true){
+            return $doc;
+          }
+          
 
+}
+
+    
+}
  /**
   * Modulo que valida sque el valor sea correcto
   *@param int $max
   *@return int
   */
- function validacion($max){
+ function validacionMaxPasajeros($max){
      $cond=true;
      do{
         echo "\nIngrese la cantidad de pasajeros: ";
@@ -72,9 +143,12 @@ function agregarPasajero($vuelo)
         $apellido = trim(fgets(STDIN));
         echo "ingrese el documento del pasajero: ";
         $documento = trim(fgets(STDIN));
+        echo "Ingrese el telefono del pasajero";
+        $telefono=trim(fgets(STDIN));
 
         //Asignamos los datos 
-        $pasajeros[count($pasajeros)] = ["nombre" => $nombre, "apellido" => $apellido, "dni" => $documento];
+        $pasajero = new Pasajero($nombre,$apellido,$documento,$telefono);
+        $pasajeros[count($pasajeros)] = $pasajero;
 
         //seteamos pasajeros en el objeto
     $vuelo->setPasajeros($pasajeros);
@@ -111,15 +185,14 @@ function editarPasajero($vuelo)
     $apellido = trim(fgets(STDIN));
     echo "ingrese el documento del pasajero: ";
     $documento = trim(fgets(STDIN));
+    echo "Ingrese el telefono del pasajero";
+    $telefono=trim(fgets(STDIN));
 
     //Asignamos los datos del nro ingresado por parametro
-
-    $pasajerosNuevo[$num-1]["nombre"] = $nombre;
-    $pasajerosNuevo[$num-1]["apellido"] = $apellido;
-    $pasajerosNuevo[$num-1]["dni"] = $documento;
+   $pasNuevo[$num-1]= new Pasajero($nombre,$apellido,$documento,$telefono);
 
     //Devolvemos el arreglo a la clase para que lo modifique
-    $vuelo->setPasajeros($pasajerosNuevo);
+    $vuelo->setPasajeros($pasNuevo);
 }
 
 /**
@@ -162,54 +235,84 @@ function valNuevoMax($vuelo){
 
     return $nuevoMax;
 }
+/**
+ * Modulo que crea un nuevo responsable y modifica al del vuelo
+ * @param Viaje $vuelo
+ */
+function editarResponsable ($vuelo){
+    echo "\nPor favor ingrese el nombre del nuevo responsable del vuelo: ";
+    $nombre = trim(fgets(STDIN));
+    echo "Luego, ingrese su apellido: ";
+    $apellido = trim(fgets(STDIN));
+    echo "Ahora ingrese el numero de licencia: ";
+    $nroLic = trim(fgets(STDIN));
+    echo "Y por ultimo, ingrese el numero de empleado: ";
+    $nroEmp = trim(fgets(STDIN));
+    $responsable = new ResponsableV($nroEmp, $nroLic, $nombre, $apellido);
 
+    $vuelo->setResponsable($responsable);
+}
 /**
  * Main
  */
 
-$vuelo = crearVuelo();
+
 $cond = true;
 //menu
 do {
     echo "\nBienvenido, por favor Elija una opción\n";
-    echo "1. Agregar un pasajero.\n";
-    echo "2. Modificar un pasajero del vuelo.\n";
-    echo "3. Mostrar datos del vuelo.\n";
-    echo "4. Modificar el destino.\n";
-    echo "5. Modificar la cantidad maxima de pasajeros.\n";
-    echo "6. Salir.\n Opciones: ";
+    echo "1. Crear Vuelo Nuevo\n";
+    echo "2. Utilizar valores precargados\n";
+    echo "3. Agregar un pasajero.\n";
+    echo "4. Modificar un pasajero del vuelo.\n";
+    echo "5. Mostrar datos del vuelo.\n";
+    echo "6. Modificar el responsable del vuelo\n";
+    echo "7. Modificar el destino.\n";
+    echo "8. Modificar la cantidad maxima de pasajeros.\n";
+    echo "9. Salir.\n Opciones: ";
      
     $opcion = trim(fgets(STDIN));
     echo "eligio opción ".$opcion;
 
     switch ($opcion) {
         case 1: {
-            agregarPasajero($vuelo);
+            $vuelo = crearVuelo();
             break;
         }
         case 2: {
-            editarPasajero($vuelo);
+            $vuelo = preCarga();
             break;
         }
         case 3: {
-            echo $vuelo;
+            agregarPasajero($vuelo);
+            
             break;
         }
         case 4: {
-            echo "\nIngrese el nuevo destino del vuelo: ";
-            $nuevoDest = trim(fgets(STDIN));
-            $vuelo->setDestino($nuevoDest);
+            editarPasajero($vuelo);
             break;
         }
         case 5: {
-            $nuevoMax = valNuevoMax($vuelo);
-            $vuelo->setMaxPasajeros($nuevoMax);
+            echo $vuelo;
             break;
         }
         case 6: {
             echo "\nGracias por usar la aplicación\n";
             $cond = false;
             break;
+        }
+        case 7: {
+            echo "\nIngrese el nuevo destino del vuelo: ";
+            $nuevoDest = trim(fgets(STDIN));
+            $vuelo->setDestino($nuevoDest);break;
+        }
+        case 8: {
+            $nuevoMax = valNuevoMax($vuelo);
+            $vuelo->setMaxPasajeros($nuevoMax);break;
+        }
+        case 9:{
+            echo "Hasta Luego!";
+            $cond=false;
         }
         default: {
             echo "\nLa opcion ingresada no existe";

@@ -6,14 +6,16 @@
     private $destino;
     private $pasajerosMax;
     private $pasajeros;
+    private $Responsable;
 
     //Constructor
-    public function __construct($cod,$dest,$pasM,$pas)
+    public function __construct($cod,$dest,$pasM,$pas,$res)
     {
         $this->codigo = $cod;
         $this->destino= $dest;
         $this->pasajerosMax = $pasM;
         $this->pasajeros = $pas;
+        $this->responsable = $res;
         
     }
     //Observadores
@@ -43,10 +45,16 @@
 
     /**
      * Metodo que retorna pasajeros
-     * @return string
+     * @return array
      */
     public function getPasajeros(){
         return $this->pasajeros;
+    }
+    /**
+     * @return object
+     */
+    public function getResponsables(){
+        return $this->responsables;
     }
 
     //Modificadores
@@ -69,20 +77,26 @@
 
     /**
      * Metodo que modifica un pasajero en un asiento del avion
-     * @param int $pas
+     * @param array $pas
      */
     public function setPasajeros($pas){
         $this->pasajeros = $pas;
     }
-
+    /**
+     * @param  object $Res
+     */
+    public function setResponsable($res){
+        $this->responsable=$res;
+    }
     //Metodo toString
 
     public function __toString(){
         $cad = "";
         for($numPasajero = 0; $numPasajero < count($this -> pasajeros); $numPasajero++ ){
-            $cad = $cad."Pasajero nro " . ($numPasajero+1) . "\nNombre: " . $this->pasajeros[$numPasajero]["nombre"] . " " . $this->pasajeros[$numPasajero]["apellido"] . ".\nDNI: " . $this->pasajeros[$numPasajero]["dni"]."\n";
+            $cad = $cad."Pasajero nro " . ($numPasajero+1) . "\nNombre: " . $this->pasajeros[$numPasajero]->getNombre(). " " . $this->pasajeros[$numPasajero]->getApellido(). ".\nDNI: " . $this->pasajeros[$numPasajero]->getDni()."\n
+            Telefono: ".$this->pasajeros[$numPasajero]->getTelefono()."\n";
         }
-        return "\nVuelo " . $this->getCodigo() . ".\nDestino: " . $this->getDestino() . "\nCantidad maxima de pasajeros: " . $this->getMaxPasajeros() . ".\nPasajeros:\n" . $cad;
+        return "\nVuelo " . $this->getCodigo() . ".\nDestino: " . $this->getDestino() . "\nCantidad maxima de pasajeros: " . $this->getMaxPasajeros() . "\nResponsable: ".$this->responsable->__toString()."\nPasajeros:\n" . $cad;
     }
 
 }
