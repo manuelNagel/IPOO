@@ -218,5 +218,5 @@ do {
     }
 } while ($cond);
 
-//desde ya muchas gracias por el tiempo qeu se tomaron en corregir. Saludos
+
 ?>
