@@ -2,6 +2,8 @@
 include "Viaje.php";
 include "ResponsableV.php";
 include "Pasajero.php";
+include "ViajeAereo.php";
+include "ViajeTerrestre.php";
 
 //funcion para precarga de una coleccion con objetos
 /**
@@ -17,7 +19,33 @@ function preCarga(){
    
                         );
     $responsableV= new ResponsableV(1,13,"Gustavo","McNiles");
-    $ViajeDefault = new Viaje(4290,"Chile",35,$coleccionPasajeros,$responsableV);
+    $ViajeDefault = new Viaje(4290,"Chile",35,$coleccionPasajeros,$responsableV,7000,true);
+    return $ViajeDefault;
+}
+function preCargaVTerrestre(){
+    $coleccionPasajeros= array( 
+        new Pasajero("Manuel","Nagel",20280046,2995579157),
+        new Pasajero("Lucia","Castro",42735572,2995579164),
+        new Pasajero("Juani","Beilicke",13508059,11559487),
+        new Pasajero("Franciso","Impini",40020782,15732892),
+        new Pasajero("Luz","Almiron",35809143,42735973)
+
+            );
+    $responsableV= new ResponsableV(1,13,"Gustavo","McNiles");
+    $ViajeDefault = new ViajeTerrestre(4290,"Chile",35,$coleccionPasajeros,$responsableV,8000,false,"Cama");
+    return $ViajeDefault;
+}
+function preCargaVAereo(){
+    $coleccionPasajeros= array( 
+        new Pasajero("Manuel","Nagel",20280046,2995579157),
+        new Pasajero("Lucia","Castro",42735572,2995579164),
+        new Pasajero("Juani","Beilicke",13508059,11559487),
+        new Pasajero("Franciso","Impini",40020782,15732892),
+        new Pasajero("Luz","Almiron",35809143,42735973)
+
+            );
+    $responsableV= new ResponsableV(1,13,"Gustavo","McNiles");
+    $ViajeDefault = new ViajeAereo(4290,"Chile",35,$coleccionPasajeros,$responsableV,15370,true,46,"Primera Clase","FlyBondi",3);
     return $ViajeDefault;
 }
 
@@ -32,8 +60,88 @@ function crearVuelo(){
     $maximo = trim(fgets(STDIN));
     $responsable= crearResponsable();
     $arrPasajeros = crearArrPasajeros($maximo);
-    $vuelo = new Viaje($codigo, $destino, $maximo, $arrPasajeros,$responsable);
+    echo"Ingrese el importe";
+    $importe=trim(fgets(STDIN));
+    echo "Es ida y vuelta? Si:True No:False";
+    $idVu=trim(fgets(STDIN));
+    $vuelo = new Viaje($codigo, $destino, $maximo, $arrPasajeros,$responsable,$importe,$idVu);
     return $vuelo;
+}
+/**
+ * Modulo para crear un nuevo viaje aereo
+ * @return ViajeAereo
+ */
+function crearViajeAereo()
+{
+    echo "\nIngrese el codigo del vuelo: ";
+    $cod = trim(fgets(STDIN));
+    echo "Luego, ingrese el destino del vuelo: ";
+    $dest = trim(fgets(STDIN));
+    echo "Ingrese la cantidad maxima de pasajeros del vuelo: ";
+    $max = trim(fgets(STDIN));
+    echo "Ingrese el importe del viaje: ";
+    $importe = trim(fgets(STDIN));
+    echo "Es ida y vuelta? Si:True No:False";
+    $idVu = trim(fgets(STDIN));
+    echo "Ingrese 'Primera Clase' o 'Clase Turista': ";
+    $clase = trim(fgets(STDIN));
+    echo "Ingrese el numero de vuelo: ";
+    $nroVuelo = trim(fgets(STDIN));
+    echo "Ingrese el nombre de la aerolinea: ";
+    $nombre = trim(fgets(STDIN));
+    echo "Ingrese la cantidad de escalas del vuelo: ";
+    $escalas = trim(fgets(STDIN));
+
+    $responsable= crearResponsable();
+    $arrPasajeros = crearArrPasajeros($max);
+
+    
+    $vuelo = new ViajeAereo($cod, $dest, $max, $arrPasajeros, $responsable, $importe, $idVu, $nroVuelo, $clase, $nombre, $escalas);
+   
+
+    return $vuelo;
+}
+
+/**
+ * Modulo para crear un nuevo viaje terrestre 
+ * @return ViajeTerrestre
+ */
+function crearViajeTerrestre()
+{
+    echo "\nIngrese el codigo del viaje: ";
+    $cod = trim(fgets(STDIN));
+    echo "Luego, ingrese el destino del viaje: ";
+    $dest = trim(fgets(STDIN));
+    echo "Ingrese la cantidad maxima de pasajeros del viaje: ";
+    $max = trim(fgets(STDIN));
+    echo "Ingrese el importe del viaje: ";
+    $importe = trim(fgets(STDIN));
+    echo "Es ida y vuelta? Si:True No:False";
+    $idVu = trim(fgets(STDIN));
+    echo "Ingrese 'Coche Cama' o 'Semi Cama': ";
+    $clase = trim(fgets(STDIN));
+
+    $responsable= crearResponsable();
+    $arrPasajeros = crearArrPasajeros($max);
+
+    $terrestre = new ViajeTerrestre($cod, $dest, $max, $arrPasajeros, $responsable, $importe, $idVu, $clase);
+    
+    return $terrestre;
+}
+/**
+ * Modulo que crea un vuelo manual
+ * @return Object
+ */
+function crearViaje(){
+    echo "Ingrese que tipo de viaje desea= Default(1) Aereo(2) Terrestre(3)";
+    $tipo=trim(fgets(STDIN));
+    switch($tipo){
+        case 1:return crearVuelo();break;
+        case 2:return crearViajeAereo();break;
+        case 3:return crearViajeTerrestre();break;
+        default:echo"Valor invalido";
+                return ;break;
+    }
 }
 /**
  * Modulo para crear al responsable del vuelo
@@ -276,11 +384,18 @@ do {
 
     switch ($opcion) {
         case 1: {
-            $vuelo = crearVuelo();
+            $vuelo = crearViaje();
             break;
         }
         case 2: {
-            $vuelo = preCarga();
+            echo "Desea cargar el vuelo predeterminad: Comun(1) Aereo(2) Terrestre(3)";
+            $opc=trim(fgets(STDIN));
+                    switch($opc){
+                        case 1:$vuelo=preCarga();break;
+                        case 2:$vuelo=preCargaVAereo();break;
+                        case 3:$vuelo=preCargaVTerrestre();break;
+                        default:echo "valor incorrecto";break;
+                    }
             break;
         }
         case 3: {

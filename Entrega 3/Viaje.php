@@ -115,6 +115,41 @@
     public function setIdayVuelta($idVu){
         $this->idaVuelta=$idVu;
     }
+    //Metodos 
+    /**
+    * Modulo que verifica la disponibilidad de pasajes
+    * @return boolean
+    *var interna boolean $cond
+    */
+    public function hayPasajesDisponible()
+    {
+        if (count($this->getPasajeros()) < $this->getMaxPasajeros()) {
+            $cond = true;
+        } else {
+            $cond = false;
+        }
+        return $cond;
+    }
+    /** 
+    *Modulo que vende el pasaje
+    * @param Pasajero $Pasajero
+    */
+    public function venderPasaje($Pasajero)
+    {
+        if($this->hayPasajesDisponible()){
+            echo "\nEl importe final del viaje es de: " . $this->getImporte() . ".\n";
+
+            $pasajeros = $this->getPasajeros();
+            $pasajeros[count($pasajeros)] = $Pasajero;
+            $this->setPasajeros($pasajeros);
+    
+        
+        }else{
+            echo "\nNo se pudo vender el pasaje";
+        }
+        
+    }
+
     //Metodo toString
 
     public function __toString(){
